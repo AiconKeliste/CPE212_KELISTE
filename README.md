@@ -1,2 +1,2 @@
 # CPE212_KELISTE
-This for hands-on-activity 2 for CPE212
+This for for CPE212
