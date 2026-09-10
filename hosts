@@ -1,4 +1,9 @@
-[myvirtualmachines]
-192.168.56.103 apache_package=apache2 php_package=libapache2-mod-php
-192.168.56.104 apache_package=apache2 php_package=libapache2-mod-php
-192.168.56.105 ansible_user=keliste-centos apache_package=httpd php_package=php
+[web_servers]
+192.168.56.103
+192.168.56.104
+
+[db_servers]
+192.168.56.105 ansible_user=keliste-centos
+
+[file_servers]
+192.168.56.106
