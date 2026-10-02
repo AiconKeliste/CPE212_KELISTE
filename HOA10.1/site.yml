@@ -1,0 +1,20 @@
+---
+- hosts: elastic
+  become: true
+  roles:
+    - base
+
+- hosts: elasticsearch_servers
+  become: true
+  roles:
+    - elasticsearch
+
+- hosts: kibana_servers
+  become: true
+  roles:
+    - kibana
+
+- hosts: logstash_servers
+  become: true
+  roles:
+    - logstash

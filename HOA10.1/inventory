@@ -1,0 +1,26 @@
+[workstations]
+192.168.56.102
+
+[web_servers]
+192.168.56.103
+192.168.56.104
+
+[db_servers]
+192.168.56.105 ansible_user=keliste-centos
+
+[file_servers]
+192.168.56.106
+
+[elasticsearch_servers]
+192.168.56.105 ansible_user=keliste-centos
+
+[kibana_servers]
+192.168.56.103
+
+[logstash_servers]
+192.168.56.104
+
+[elastic:children]
+elasticsearch_servers
+kibana_servers
+logstash_servers

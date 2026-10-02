@@ -1,0 +1,28 @@
+---
+- name: Install Kibana
+  ansible.builtin.package:
+    name: kibana
+    state: present
+
+- name: Configure Kibana
+  ansible.builtin.template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    owner: root
+    group: kibana
+    mode: '0660'
+  notify: Restart kibana
+
+- name: Enable and start Kibana
+  ansible.builtin.service:
+    name: kibana
+    state: started
+    enabled: true
+
+- name: Open port 5601 (CentOS firewalld)
+  ansible.posix.firewalld:
+    port: 5601/tcp
+    permanent: true
+    immediate: true
+    state: enabled
+  when: ansible_os_family == "RedHat"

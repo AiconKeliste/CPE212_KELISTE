@@ -1,0 +1,28 @@
+---
+- name: Install Logstash
+  ansible.builtin.package:
+    name: logstash
+    state: present
+
+- name: Deploy Logstash pipeline
+  ansible.builtin.template:
+    src: logstash.conf.j2
+    dest: /etc/logstash/conf.d/logstash.conf
+    owner: root
+    group: logstash
+    mode: '0644'
+  notify: Restart logstash
+
+- name: Enable and start Logstash
+  ansible.builtin.service:
+    name: logstash
+    state: started
+    enabled: true
+
+- name: Open port 5044 (CentOS firewalld)
+  ansible.posix.firewalld:
+    port: 5044/tcp
+    permanent: true
+    immediate: true
+    state: enabled
+  when: ansible_os_family == "RedHat"

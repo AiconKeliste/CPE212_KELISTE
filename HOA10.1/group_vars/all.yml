@@ -1,0 +1,2 @@
+es_host: "{{ groups['elasticsearch_servers'][0] }}"
+elastic_version_repo: "8.x"

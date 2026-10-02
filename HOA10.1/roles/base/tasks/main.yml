@@ -1,0 +1,44 @@
+---
+- name: Debian family setup
+  when: ansible_os_family == "Debian"
+  block:
+    - name: Install prerequisites
+      ansible.builtin.apt:
+        name: [apt-transport-https, gnupg, curl]
+        state: present
+        update_cache: true
+
+    - name: Ensure keyrings directory exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Elastic GPG key
+      ansible.builtin.get_url:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        dest: /etc/apt/keyrings/elastic.asc
+        mode: '0644'
+
+    - name: Add Elastic APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/elastic.asc] https://artifacts.elastic.co/packages/{{ elastic_version_repo }}/apt stable main"
+        state: present
+        filename: elastic
+
+- name: RedHat family setup
+  when: ansible_os_family == "RedHat"
+  block:
+    - name: Import Elastic GPG key
+      ansible.builtin.rpm_key:
+        key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+
+    - name: Add Elastic YUM repository
+      ansible.builtin.yum_repository:
+        name: elastic
+        description: Elastic repository
+        baseurl: "https://artifacts.elastic.co/packages/{{ elastic_version_repo }}/yum"
+        gpgcheck: true
+        gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        enabled: true
