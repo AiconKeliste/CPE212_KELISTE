@@ -1,0 +1,13 @@
+---
+- hosts: web_servers, db_servers
+  become: true
+  roles:
+    - prometheus.prometheus.prometheus
+  vars:
+      prometheus_targets:
+        node:
+        - targets:
+          - localhost:9090
+          - node.demo.do.prometheus.io
+          labels:
+            env: demosite

@@ -1,0 +1,87 @@
+---
+- hosts: web_servers
+  become: true
+
+  tasks:
+   - name: Update(Ubuntu)
+     ansible.builtin.apt:
+      upgrade: dist
+      update_cache: true
+     when: ansible_distribution == "Ubuntu"
+- hosts: web_servers
+  become: true
+
+  tasks:
+   - name: Packages
+     apt:
+        name: "{{ packages }}"
+        state: present
+     vars:
+        packages:
+        - tar
+        - wget
+
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Create New User (Ubuntu & CentOS)
+      user:
+        name: Prometheus
+        password: aicon
+        shell: /bin/bash
+        state: present
+
+    - name: Add user to sudo
+      user:
+        name: Prometheus
+        groups: sudo
+        append: yes
+
+    - name: passwordless (Ubuntu)
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+
+    - name: passwordless(CentOS)
+      lineinfile:
+        path: /etc/sudoers.d/Prometheus
+        state: present
+
+- hosts: db_servers
+  become: true
+  tasks:
+    - name: Update(CentOS)
+      dnf:
+        name: epel-release
+        state: latest
+        update_only: yes
+      when: ansible_distribution == "CentOS"
+
+- hosts: db_servers
+  become: true
+  tasks:
+    - name: Upgrade
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Packages
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+        - tar
+        - wget
+      tags: General_Packages
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Creating a Directory
+      file:
+        path: ~/CPE212_KELISTE/MIDTERM_EXAM/
+        state: directory
+        state: present
+

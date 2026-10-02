@@ -1,0 +1,34 @@
+---
+- name: Installing nagios in Ubuntu
+  block:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install nagios and plugins (ubuntu)
+      ansible.builtin.apt:
+        name:
+          - nagios4
+          - nagios-plugins-basic
+        state: present
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install nagios in Centos
+  block:
+    - name: Install epel repository
+      ansible.builtin.yum:
+        name: epel-release
+        state: present
+
+    - name: Install nagios and plugins (centos)
+      ansible.builtin.yum:
+        name:
+          - nagios
+          - nagios-plugins-load
+          - nagios-plugins-disk
+          - nagios-plugins-users
+          - nagios-plugins-procs
+          - nagios-plugins-swap
+          - nagios-plugins-ping
+        state: present
+  when: ansible_facts['os_family'] == "RedHat"
