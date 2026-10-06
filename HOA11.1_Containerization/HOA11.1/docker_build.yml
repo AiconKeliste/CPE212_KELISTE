@@ -1,0 +1,35 @@
+---
+- hosts: localhost
+  become: true
+  tasks:
+    - name: Install Docker and Python Docker SDK
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+          - python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Enable and start the Docker socket and service
+      systemd:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      loop:
+        - docker.socket
+        - docker.service
+
+    - name: Add current user to docker group
+      user:
+        name: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        groups: docker
+        append: yes
+
+    - name: Build the web and DB server image from the Dockerfile
+      command: docker build -t web_db_server:latest {{ playbook_dir }}
+      args:
+        chdir: "{{ playbook_dir }}"
