@@ -1,0 +1,9 @@
+---
+- name: Display Variables
+  hosts: servers
+
+  tasks:
+
+    - name: Display Message
+      debug:
+        msg: " Welcome to Ansible Laboratory "
